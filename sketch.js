@@ -2,8 +2,9 @@ let json = {};
 json.name = 'matriz';
 
 var x = 205;
-var y = 105;
-var c1='#ffffff'
+var y = 60;
+var yBotoes = 130;
+var c1 ='#ffffff'
 var pixel = [[c1,c1,c1,c1],
              [c1,c1,c1,c1],
              [c1,c1,c1,c1],
@@ -11,28 +12,27 @@ var pixel = [[c1,c1,c1,c1],
 var colorPicker;
 var cor;
 
-var diamentroBotao = 3;
+var diametroBotao = 3;
 var grid = true;
 
 function setup() {
   createCanvas(650, 450);
   colorPicker = createColorPicker('#000000');
-  colorPicker.position(70, height - 220);
+  colorPicker.position(70, yBotoes);
 }
 
 function draw() {
   background(220);
-  cor = colorPicker.value()
+  cor = colorPicker.value();
   //Cria e altera os pixels
-  //stroke('#000000')
   for(let i = 0; i < 4; i++){
     for(let j = 0; j < 4; j++){
-      grindInterno(grid)
+      grindInterno(grid);
       fill(pixel[i][j]);
       square(x+(60*j), y+(60*i), 60);
     }
   }
-  stroke('#000000')
+  stroke('#000000');
   alteraPixels();
   botoes();
 }
@@ -51,7 +51,7 @@ function alteraPixels(){
 
 function mouseClicked() {
   //Apaga todos os pixels
-  if(mouseX > 70 && mouseX < 118 && mouseY > 270 && mouseY < 298){
+  if(mouseX > 70 && mouseX < 118 && mouseY > yBotoes + (40*1) && mouseY < yBotoes + (40*1) + 28){
      for(let i = 0; i < 4; i++){
        for(let j = 0; j < 4; j++){
          pixel[i][j] = c1
@@ -59,42 +59,54 @@ function mouseClicked() {
      }
   }
   //Salva/envia Json
-  if(mouseX > 70 && mouseX < 118 && mouseY > 310 && mouseY < 338){
+  if(mouseX > 70 && mouseX < 118 && mouseY > yBotoes + (40*2) && mouseY < yBotoes + (40*2) + 28){
     salvarMatriz();
   }
   // liga/desliga grid
-  if(mouseX > 70 && mouseX < 118 && mouseY > 350 && mouseY < 378 && grid == true){
+  if(mouseX > 70 && mouseX < 118 && mouseY > yBotoes + (40*3) && mouseY < yBotoes + (40*3) + 28 && grid == true){
     grid = false;
-  } else if((mouseX > 70 && mouseX < 118 && mouseY > 350 && mouseY < 378 && grid == false)){
+  } else if((mouseX > 70 && mouseX < 118 && mouseY > yBotoes + (40*3) && mouseY < yBotoes + (40*3) + 28 && grid == false)){
      grid = true;
   }
-  
+
 }
 
 function salvarMatriz(){
   json.b = [[],[],[],[]]
-  
+
   for(let i = 0; i < 4; i++){
     for(let j = 0; j < 4; j++){
-      json.b[i][j] = "0x"+pixel[i][j].slice(1)
+      json.b[i][j] = parseInt("0x"+pixel[i][j].slice(1))
     }
   }
-  
-  saveJSON(json, 'matriz.json');
+  //
+  function reqListener() {
+    console.log(this.responseText);
+  }
+
+  const req = new XMLHttpRequest();
+  req.addEventListener("load", reqListener);
+
+  req.open("POST", "/api/enviardados");
+  req.responseType = "text";
+  req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+  req.send(JSON.stringify(json));
+  //
+  //saveJSON(json, 'matriz.json');
 }
 
 function botoes(){
   //botão: apaga tudo
   fill(255);
-  rect(70, 270, 48, 28, diamentroBotao, diamentroBotao, diamentroBotao, diamentroBotao);
-  
+  rect(70, yBotoes + (40*1), 48, 28, diametroBotao, diametroBotao, diametroBotao, diametroBotao);
+
   //botao: envia/baixa Json
   fill(60);
-  rect(70, 310, 48, 28, diamentroBotao, diamentroBotao, diamentroBotao, diamentroBotao);
-  
+  rect(70, yBotoes + (40*2), 48, 28, diametroBotao, diametroBotao, diametroBotao, diametroBotao);
+
   //botão: liga/desliga grid
   fill(60,80,200);
-  rect(70, 350, 48, 28, diamentroBotao, diamentroBotao, diamentroBotao, diamentroBotao);
+  rect(70, yBotoes + (40*3), 48, 28, diametroBotao, diametroBotao, diametroBotao, diametroBotao);
 }
 
 function grindInterno(g){
