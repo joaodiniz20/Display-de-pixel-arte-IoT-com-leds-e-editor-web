@@ -3,7 +3,7 @@ const app = express();
 const path = require('path');
 
 const mqtt = require('mqtt')
-
+//aaaaaaaaaaaaaaaaaaa
 const host = 'broker.emqx.io'
 const port = '1883'
 const clientId = `mqtt_${Math.random().toString(16).slice(3)}`
